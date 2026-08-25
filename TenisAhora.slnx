@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TenisAhora.API/TenisAhora.API.csproj" />
+    <Project Path="src/TenisAhora.Application/TenisAhora.Application.csproj" />
+    <Project Path="src/TenisAhora.Domain/TenisAhora.Domain.csproj" />
+    <Project Path="src/TenisAhora.Infrastructure/TenisAhora.Infrastructure.csproj" />
+  </Folder>
+</Solution>
