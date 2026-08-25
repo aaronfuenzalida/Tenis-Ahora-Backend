@@ -16,7 +16,19 @@ public class Usuario
 
     public required string Email { get; set; }
 
-    public required string PassWordHash { get; set; }
+    public required string PasswordHash { get; set; }
 
     public required Rol Rol { get; set; }
+
+    public bool EstaActivo => FechaBaja is null;
+
+    public DateTime? FechaBaja { get; private set; }
+
+    public void DarDeBaja()
+    {
+        if (FechaBaja is not null)
+            throw new InvalidOperationException("El usuario ya está dado de baja.");
+
+        FechaBaja = DateTime.UtcNow;
+    }
 }
