@@ -1,4 +1,5 @@
 namespace TenisAhora.Application.Auth.Interfaces;
+
 public interface IPasswordHasher
 {
     string Hash(string password);
