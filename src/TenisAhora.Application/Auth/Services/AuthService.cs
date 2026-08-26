@@ -51,7 +51,7 @@ public class AuthService : IAuthService
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
     {
         Usuario? usuario = await _usuarioRepository.ObtenerPorEmailAsync(dto.Email);
-        
+
         if (usuario is null || !usuario.EstaActivo)
         {
             throw new CredencialesInvalidasException();
