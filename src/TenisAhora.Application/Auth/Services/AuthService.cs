@@ -45,7 +45,7 @@ public class AuthService : IAuthService
 
         await _usuarioRepository.AgregarAsync(usuario);
 
-        return new AuthResponseDto(_jwtTokenGenerator.GenerarToken(usuario), usuario.Email, usuario.Rol.ToString());
+        return Construir(usuario);
     }
 
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
@@ -62,6 +62,16 @@ public class AuthService : IAuthService
             throw new CredencialesInvalidasException();
         }
 
-        return new AuthResponseDto(_jwtTokenGenerator.GenerarToken(usuario), usuario.Email, usuario.Rol.ToString());
+        return Construir(usuario);
     }
+
+    private AuthResponseDto Construir(Usuario usuario) => new(
+        _jwtTokenGenerator.GenerarToken(usuario),
+        usuario.Id,
+        usuario.Nombre,
+        usuario.Apellido,
+        usuario.Email,
+        usuario.NumeroTelefono,
+        usuario.Direccion,
+        usuario.Rol.ToString());
 }
