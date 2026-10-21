@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Copiar solo los .csproj primero para que el restore quede cacheado entre builds
+COPY src/TenisAhora.API/TenisAhora.API.csproj src/TenisAhora.API/
+COPY src/TenisAhora.Application/TenisAhora.Application.csproj src/TenisAhora.Application/
+COPY src/TenisAhora.Domain/TenisAhora.Domain.csproj src/TenisAhora.Domain/
+COPY src/TenisAhora.Infrastructure/TenisAhora.Infrastructure.csproj src/TenisAhora.Infrastructure/
+RUN dotnet restore src/TenisAhora.API/TenisAhora.API.csproj
+
+COPY src/ src/
+RUN dotnet publish src/TenisAhora.API/TenisAhora.API.csproj -c Release --no-restore -o /app/publish /p:UseAppHost=false
+
+# Imagen no-chiseled: trae ICU, asi no hace falta InvariantGlobalization
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+WORKDIR /app
+COPY --from=build /app/publish ./
+# 8080 y no 80: la imagen corre como usuario no-root y el 80 es un puerto privilegiado
+ENV PORT=8080 DOTNET_EnableDiagnostics=0
+ENTRYPOINT ["dotnet", "TenisAhora.API.dll"]
