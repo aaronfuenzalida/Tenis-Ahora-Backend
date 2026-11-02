@@ -1,5 +1,5 @@
 """
-Prueba de humo de la API Tenis Ahora.
+Prueba de humo de la API de prueba Tenis Ahora.
 
 Uso:  python tests/smoke.py [http://localhost:5090/api]
 
@@ -321,6 +321,11 @@ def main():
     st, att = call("POST", f"/clases/{cid}/asistencia/alternar", {"studentId": s1["student"]["id"], "sessionIndex": 1}, expect=200)
     cls_now = next(c for c in att["classes"] if c["id"] == cid)
     st_now = next(s for s in cls_now["students"] if s["id"] == s1["student"]["id"])
+    check("alumno nuevo arranca sin asistencia registrada", set(s1["student"]["attendance"]) == {"-"})
+    check("alternar asistencia sin registrar -> P", st_now["attendance"][1] == "P")
+    st, att = call("POST", f"/clases/{cid}/asistencia/alternar", {"studentId": s1["student"]["id"], "sessionIndex": 1}, expect=200)
+    cls_now = next(c for c in att["classes"] if c["id"] == cid)
+    st_now = next(s for s in cls_now["students"] if s["id"] == s1["student"]["id"])
     check("alternar asistencia P -> A", st_now["attendance"][1] == "A")
     st, att = call("POST", f"/clases/{cid}/asistencia/sesion", {"sessionIndex": 0, "status": "A"}, expect=200)
     cls_now = next(c for c in att["classes"] if c["id"] == cid)
@@ -340,7 +345,7 @@ def main():
     st, _ = call("PUT", f"/profesores/{prof['id']}/certificacion", {"expiryDate": in_days(-1)}, expect=200)
     st, _ = call("POST", "/clases", {"name": "Clase Vencida", "kind": "clase", "coachId": prof["id"], "maxCapacity": 5})
     check("clase con título vencido -> 400 (RD09)", st == 400)
-    st, _ = call("POST", "/clases-particulares", {"coachId": prof["id"], "kind": "clase", "studentName": "X", "studentDni": "1", "date": in_days(3), "time": "10:00"})
+    st, _ = call("POST", "/clases-particulares", {"coachId": prof["id"], "kind": "clase", "studentName": "X", "studentDni": "1", "date": in_days(3), "time": "10:00 - 11:00"})
     check("turno particular con título vencido -> 400 (RD09)", st == 400)
     st, _ = call("PUT", f"/profesores/{prof['id']}", {"availableHours": "Lunes 10:00 - 12:00"}, expect=200)
     check("editar datos sin tocar el título no lo revalida", st == 200)
@@ -434,7 +439,7 @@ def main():
     check("socio ve en qué clases está inscripto", next(c for c in clases if c["id"] == "cls-01")["enrolled"] and not next(c for c in clases if c["id"] == "cls-02")["enrolled"])
     st, _ = call("POST", "/clases/cls-01/asistencia/sesion", {"sessionIndex": 0, "status": "P"})
     check("socio no toma asistencia -> 403", st == 403)
-    lesson = {"coachId": "coach-01", "coachName": "Gustavo Ferrari", "studentName": "Juan Sánchez", "studentDni": socio_dni, "date": "2026-11-12", "time": "10:00"}
+    lesson = {"coachId": "coach-01", "coachName": "Gustavo Ferrari", "studentName": "Juan Sánchez", "studentDni": socio_dni, "date": in_days(10), "time": "10:00 - 11:00"}
     st, _ = call("POST", "/clases-particulares", dict(lesson, kind="clase"))
     check("socio pide clase particular a un profesor", st == 201)
     st, _ = call("POST", "/clases-particulares", dict(lesson, kind="clase"))
@@ -454,7 +459,7 @@ def main():
     check("profesor toma asistencia en su clase", st == 200)
     st, _ = call("POST", "/clases/cls-04/asistencia/sesion", {"sessionIndex": 0, "status": "P"})
     check("profesor no toma asistencia en clase ajena -> 403", st == 403)
-    st, p = call("POST", "/clases-particulares", dict(lesson, coachId="coach-02", kind="entrenamiento", time="11:00"), expect=201)
+    st, p = call("POST", "/clases-particulares", dict(lesson, coachId="coach-02", kind="entrenamiento", time="11:00 - 12:00"), expect=201)
     check("clase particular del profesor queda a su nombre y como clase", p["coachId"] == "coach-01" and p["kind"] == "clase")
     st, c1 = call("PUT", "/profesores/coach-01", {"availableHours": "Smoke", "type": "Entrenador"}, expect=200)
     check("profesor edita su ficha sin cambiar su tipo", c1["availableHours"] == "Smoke" and c1["type"] == "Profesor")
@@ -463,7 +468,7 @@ def main():
 
     TOKEN, ent = login_as("entrenador@tenisahora.com", full=True)
     check("login entrenador", ent["rol"] == "Entrenador")
-    st, p = call("POST", "/clases-particulares", dict(lesson, coachId="coach-02", time="12:00"), expect=201)
+    st, p = call("POST", "/clases-particulares", dict(lesson, coachId="coach-02", time="12:00 - 13:00"), expect=201)
     check("clase particular del entrenador queda como entrenamiento", p["kind"] == "entrenamiento")
     TOKEN = admin_token
 
