@@ -4,5 +4,6 @@ namespace TenisAhora.Application.Auth.Interfaces;
 
 public interface IJwtTokenGenerator
 {
-    string GenerarToken(Usuario usuario);
+    // ExpiraEn: segundos Unix.
+    (string Token, long ExpiraEn) GenerarToken(Usuario usuario, string rol);
 }

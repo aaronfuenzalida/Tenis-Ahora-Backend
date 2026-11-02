@@ -2,5 +2,5 @@ namespace TenisAhora.Domain.Exceptions;
 
 public class EmailYaRegistradoException : Exception
 {
-    public EmailYaRegistradoException(string email) : base($"El email {email} ya está registrado.") { }
+    public EmailYaRegistradoException() : base("Ya existe un usuario registrado con ese email.") { }
 }

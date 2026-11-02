@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="seed\seed.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\TenisAhora.Application\TenisAhora.Application.csproj" />
     <ProjectReference Include="..\TenisAhora.Infrastructure\TenisAhora.Infrastructure.csproj" />
   </ItemGroup>

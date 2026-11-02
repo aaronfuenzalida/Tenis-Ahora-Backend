@@ -23,8 +23,12 @@ public class ManejoErroresMiddleware
         {
             var (status, mensaje) = ex switch
             {
-                EmailYaRegistradoException => (StatusCodes.Status409Conflict, ex.Message),
+                EmailYaRegistradoException or ConflictoException => (StatusCodes.Status409Conflict, ex.Message),
                 CredencialesInvalidasException => (StatusCodes.Status401Unauthorized, ex.Message),
+                DatosInvalidosException => (StatusCodes.Status400BadRequest, ex.Message),
+                AccesoDenegadoException => (StatusCodes.Status403Forbidden, ex.Message),
+                NoEncontradoException => (StatusCodes.Status404NotFound, ex.Message),
+                PagoRechazadoException => (StatusCodes.Status402PaymentRequired, ex.Message),
                 _ => (StatusCodes.Status500InternalServerError, "Ocurrió un error inesperado.")
             };
 

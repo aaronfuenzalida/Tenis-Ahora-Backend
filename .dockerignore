@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+.git/
+.vs/
+.env
+**/data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

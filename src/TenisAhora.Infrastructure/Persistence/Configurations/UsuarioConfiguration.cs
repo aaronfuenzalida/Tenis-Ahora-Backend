@@ -10,6 +10,9 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
     {
         builder.HasKey(u => u.Id);
 
+        // Se arma con Nombre y Apellido.
+        builder.Ignore(u => u.NombreCompleto);
+
         builder.Property(u => u.Nombre).HasMaxLength(100);
         builder.Property(u => u.Apellido).HasMaxLength(100);
         builder.Property(u => u.Email).HasMaxLength(150);
@@ -19,7 +22,5 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         builder.HasIndex(u => u.Email).IsUnique();
 
         builder.Property(u => u.Rol).HasConversion<string>().HasMaxLength(20);
-
-        builder.HasQueryFilter(u => u.FechaBaja == null);
     }
 }
